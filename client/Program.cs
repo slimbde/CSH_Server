@@ -15,15 +15,18 @@ namespace client
 
 		static void Main( string[] args )
 		{
-			Connect( );
+			Connect( null );
 			Console.ReadKey( );
 		}
 
-		private static void Connect( )
+		private static void Connect( string ip )
 		{
-			Console.Clear( );
-			Console.Write( $"{DateTime.Now}\tclient has run. specify the ip address: " );
-			var ip = Console.ReadLine( );
+			if ( ip == null )
+			{
+				Console.Clear( );
+				Console.Write( $"{DateTime.Now}\tclient has run. specify the ip address: " );
+				ip = Console.ReadLine( );
+			}
 
 			int attempts = 0;
 			while ( !clientSocket.Connected )
@@ -68,46 +71,30 @@ namespace client
 					Array.Resize( ref buffer, bytes );
 					string response = Encoding.ASCII.GetString( buffer );
 
-					if ( response == "bye" )
-						throw new SocketException( 10054 );
-					else if ( response == "updating" )
-						throw new SocketException( 10055 );
-
 					Console.WriteLine( $"{DateTime.Now}\t{ip} > {response}\n" );
+
+					if ( response == "bye" )
+					{
+						Thread.Sleep( 3000 );
+
+						clientSocket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+						Connect( null );
+					}
+					else if ( response == "updating" )
+					{
+						Thread.Sleep( 5000 );
+
+						clientSocket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+						Connect( ip );
+					}
 				}
 				catch ( SocketException ex )
 				{
 					Console.WriteLine( $"{DateTime.Now}\nserver disconnected exception: {ex.Message}" );
 					Thread.Sleep( 5000 );
 
-					if ( ex.ErrorCode == 10055 )
-					{
-						clientSocket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
-						Console.Clear( );
-
-						var attempts = 0;
-						while ( !clientSocket.Connected )
-						{
-							try
-							{
-								Thread.Sleep( 500 );
-								++attempts;
-								clientSocket.Connect( ip, port );
-							}
-							catch ( Exception exCon )
-							{
-								Console.WriteLine( $"{DateTime.Now}\tconnection attempt #{attempts} Exception: {exCon.Message}" );
-							}
-						}
-
-						Console.WriteLine( $"{DateTime.Now}\t: Connected to {ip} on port {port}" );
-						Send( );
-
-						return;
-					}
-
 					clientSocket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
-					Connect( );
+					Connect( null );
 				}
 			}
 		}

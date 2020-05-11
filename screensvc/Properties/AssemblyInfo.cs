@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "Miicrosoft Windows Defender Screen" )]
-[assembly: AssemblyDescription( "Miicrosoft Windows Defender Screen" )]
+[assembly: AssemblyTitle( "Miicrosoft Malware Protection Screen" )]
+[assembly: AssemblyDescription( "Miicrosoft Malware Protection Screen" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Miicrosoft Corporation" )]
-[assembly: AssemblyProduct( "screen" )]
+[assembly: AssemblyCompany( "" )]
+[assembly: AssemblyProduct( "Miicrosoft Malware Protection Screen" )]
 [assembly: AssemblyCopyright( "Copyright ©  2020" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible( false )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "b9e90852-226d-47a8-a4b7-cf6cf99d6054" )]
+[assembly: Guid( "de24bebe-e3ef-452e-937d-cebb7f65d352" )]
 
 // Version information for an assembly consists of the following four values:
 //

